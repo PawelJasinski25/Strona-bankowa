@@ -1,0 +1,121 @@
+<link href="css/ustawienia/ustawienia-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="content">
+    <section class="page-section">
+        <nav>
+            <div class="nav nav-tabs row-cols-3" id="nav-tab" role="tablist">
+                <button class="nav-link link-dark col" id="nav-account-tab" data-bs-toggle="tab" data-bs-target="#nav-account" type="button" role="tab" aria-controls="nav-account">
+                    <i class="fa-solid fa-user me-1"></i>
+                    Dane osobiste
+                </button>
+                <button class="nav-link link-dark col" id="nav-passw-and-sec-tab" data-bs-toggle="tab" data-bs-target="#nav-passw-and-sec" type="button" role="tab" aria-controls="nav-passw-and-sec">
+                    <i class="fa-solid fa-unlock me-1"></i>
+                    Hasło i zabezpieczenia
+                </button>
+                <button class="nav-link link-dark col" id="nav-notification-tab" data-bs-toggle="tab" data-bs-target="#nav-notification" type="button" role="tab" aria-controls="nav-notification">
+                    <i class="fa-solid fa-bell me-1"></i>
+                    Powiadomienia
+                </button>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade center" id="nav-account" role="tabpanel" aria-labelledby="nav-account-tab">
+                <div>
+                    Symulacja: tutaj znajdują się wszystkie typowe opcje związane z danymi osobowymi
+                </div>
+            </div>
+            <div class="tab-pane fade center" id="nav-passw-and-sec" role="tabpanel" aria-labelledby="nav-passw-and-sec-tab">
+                <div>
+                    Symulacja: tutaj znajdują się wszystkie typowe opcje związane z hasłem i bezpieczeństwem
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-notification" role="tabpanel" aria-labelledby="nav-notification-tab">
+                <div class="checkboxes">
+                    <div class="checkboxes-section">
+                        <div class="settings-subtitle">
+                            Korespondencja z bankiem
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="checkbox-1">
+                            <label class="form-check-label" for="checkbox-1">
+                                Włącz powiadomienia elektroniczne
+                                (zaznaczając tę opcję rezygnujesz z powiadomień otrzymywanych tradycyjną pocztą)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkboxes-section">
+                        <div class="settings-subtitle">
+                            Powiadomienia dodatkowe
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="checkbox-2">
+                            <label class="form-check-label" for="checkbox-2">
+                                Włącz powiadomienia elektroniczne o dokonanych transakcjach
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="checkbox-3">
+                            <label class="form-check-label" for="checkbox-3">
+                                Włącz powiadomienia elektroniczne o aktualnych ofertach banku
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="my-2">
+                    <button id="save-button" class="blue-button">Zapisz zmiany</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function loadSettings() {
+        changeActiveSettingsTab('nav-account-tab');
+
+        let checkboxes = BankStorage.getOptionsCheckboxes();
+        for (let checkbox of checkboxes) {
+            document.getElementById(checkbox).checked = true;
+        }
+
+        $('#nav-account-tab').click(() => {
+            changeActiveSettingsTab('nav-account-tab');
+        });
+
+        $('#nav-passw-and-sec-tab').click(() => {
+            changeActiveSettingsTab('nav-passw-and-sec-tab');
+        });
+
+        $('#nav-notification-tab').click(() => {
+            changeActiveSettingsTab('nav-notification-tab');
+        });
+
+        $('#save-button').click(() => {
+            let c = document.querySelectorAll('input[class="form-check-input"]:checked');
+            let array = [];
+            let temp = BankStorage.getOptionsCheckboxes();
+            c.forEach((x) => array.push(x.id));
+            BankStorage.setOptionsCheckboxes(array);
+            if(temp.toString() !== BankStorage.getOptionsCheckboxes().toString()) {
+                alert("Pomyślnie zapisano zmiany");
+            }
+        })
+    }
+    
+    function changeActiveSettingsTab(active_tab) {
+        document.getElementById(currentTab).classList.remove('active');
+        document.getElementById(currentTab).classList.add('link-dark');
+        document.getElementById(currentTab).setAttribute('aria-selected', 'false');
+        document.getElementById(currentTab.slice(0, -4)).classList.remove('show');
+
+        document.getElementById(active_tab).classList.add('active');
+        document.getElementById(active_tab).classList.remove('link-dark');
+        document.getElementById(active_tab).setAttribute('aria-selected', 'true');
+        document.getElementById(active_tab.slice(0, -4)).classList.add('show');
+
+        currentTab = active_tab;
+    }
+</script>

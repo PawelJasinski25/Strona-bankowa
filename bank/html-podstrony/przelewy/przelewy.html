@@ -1,0 +1,189 @@
+<link href="css/przelewy/przelewy-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="account-state">
+    <div id="account-state-header">Stan konta</div>
+    <div id="account-state-info">
+        <div id="account-name"></div>
+        <div id="account-number"></div>
+        <div id="available-funds"></div>
+    </div>
+</div>
+<div id="form-container">
+    <div id="form-header">Dane przelewu</div>
+    <form>
+        <div class="form-column">
+            <div class="form-field-container">
+                <label for="from">Przelew z</label>
+                <select id="from">
+                    <option id="drop-down-option" value="default-account"></option>
+                </select>
+            </div>
+            <div class="form-field-container">
+                <label for="beneficiary">Przelew do (imię i nazwisko lub nazwa)</label>
+                <input type="text" id="beneficiary" name="beneficiary">
+                <div id="beneficiary-error-box" class="error-box"></div>
+            </div>
+            <div class="form-field-container responsive-margin-bottom">
+                <label for="to-number">Numer konta lub telefonu</label>
+                <input type="text" id="to-number" name="to-number">
+                <div id="to-number-error-box" class="error-box"></div>
+            </div>
+        </div>
+        <div class="form-column">
+            <div class="form-field-container">
+                <label for="title">Tytuł przelewu</label>
+                <input type="text" id="title" name="title">
+                <div id="title-error-box" class="error-box"></div>
+            </div>
+            <div class="form-field-container">
+                <label for="date">Data wykonania przelewu</label>
+                <input type="date" id="date" name="date">
+                <div id="date-error-box" class="error-box"></div>
+            </div>
+            <div class="form-field-container">
+                <label for="amount">Kwota</label>
+                <div id="amount-container">
+                    <input type="text" id="amount" name="amount">
+                    <p id="zl">zł</p>
+                </div>
+                <div id="amount-error-box" class="error-box"></div>
+            </div>
+        </div>
+    </form>
+    <div id="form-button-container">
+        <a id="form-button" class="blue-button">Potwierdź</a>
+    </div>
+</div>
+
+<div id="bt-pop-up-window" class="bt-pop-up">
+    <div id="bt-pop-up-content-window" class="bt-pop-up-content">
+        <span id="close-bt-pop-up-button" class="close-bt-pop-up">&times;</span>
+        <span id="bt-pop-up-text">Błędnie wprowadzone dane</span>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function initializeForm() {
+        firstTime = true;
+
+        const accountNameDiv = document.getElementById('account-name');
+        const accountNumberDiv = document.getElementById('account-number');
+        const availableFundsDiv = document.getElementById('available-funds');
+
+        accountNameDiv.innerHTML = BankStorage.getAccountName();
+        accountNumberDiv.innerHTML = longFormatAccNum(BankStorage.getAccountNumber());
+        availableFundsDiv.innerHTML = formatMoney(BankStorage.getAvailableFunds());
+
+        const dropDownOption = document.getElementById('drop-down-option');
+        dropDownOption.innerHTML = BankStorage.getAccountName();
+
+        const pendingBankTransfer = BankStorage.getPendingBankTransfer();
+
+        if (pendingBankTransfer !== null) {
+            document.getElementById('beneficiary').value = pendingBankTransfer.beneficiary;
+            document.getElementById('to-number').value = pendingBankTransfer.toNumber;
+            document.getElementById('title').value = pendingBankTransfer.title;
+            document.getElementById('date').value = pendingBankTransfer.date.split('.').reverse().join('-');
+            document.getElementById('amount').value = String(pendingBankTransfer.amount).replace(/\./g, ',');
+        }
+
+        document.getElementById('date').setAttribute('min', getCurrentDate());
+        document.getElementById('date').value = getCurrentDate();
+    }
+
+    document.getElementById('beneficiary').addEventListener('input', () => {
+        validateBeneficiary();
+    });
+
+    document.getElementById('to-number').addEventListener('blur', () => {
+        firstTime = false;
+    });
+    document.getElementById('to-number').addEventListener('change', (event) => {
+        validateToNumber(event);
+    });
+    document.getElementById('to-number').addEventListener('input', (event) => {
+        if (!firstTime) {
+            validateToNumber(event);
+        }
+    });
+
+    document.getElementById('title').addEventListener('input', () => {
+        validateTitle();
+    });
+
+    document.getElementById('date').addEventListener('input', () => {
+        validateDate();
+    });
+
+    document.getElementById('amount').addEventListener('change', (event) => {
+        validateAmount(event);
+    });
+    document.getElementById('amount').addEventListener('input', (event) => {
+        validateAmount(event);
+    });
+
+    document.getElementById('form-button').addEventListener('click', (event) => {
+        if (firstTime) {
+            firstTime = false;
+        }
+
+        const activeElement = document.activeElement;
+
+        if (activeElement) {
+            activeElement.blur();
+        }
+
+        validateBeneficiary();
+        validateToNumber(event);
+        validateTitle();
+        validateDate();
+        validateAmount(event);
+
+        const errorBoxes = [
+            document.getElementById('beneficiary-error-box'),
+            document.getElementById('to-number-error-box'),
+            document.getElementById('title-error-box'),
+            document.getElementById('date-error-box'),
+            document.getElementById('amount-error-box')
+        ];
+
+        // sprawdzamy czy przynajmniej jeden error box jest widoczny
+        const isWrongInput = errorBoxes.some(errorBox => window.getComputedStyle(errorBox).display === 'block');
+
+        if (!isWrongInput) {
+            const fromAccount = BankStorage.getAccountName();
+            const fromNumber = BankStorage.getAccountNumber();
+            const beneficiary = document.getElementById('beneficiary').value;
+            const toNumber = document.getElementById('to-number').value;
+            const title = document.getElementById('title').value;
+            const date = document.getElementById('date').value.split('-').reverse().join('.');
+
+            let amount = document.getElementById('amount').value;
+            let finalAmount = Transaction.handleTransactionAmount(amount, BankStorage.getAvailableFunds()).finalBankStorageValue;
+
+            const pendingBankTransfer = new BankTransfer(fromAccount, fromNumber, beneficiary, toNumber, title, date, String(finalAmount), EXPENSE);
+            BankStorage.setPendingBankTransfer(pendingBankTransfer);
+
+            loadBankTransferConfirmationPage();
+        }
+        else {
+            document.getElementById('bt-pop-up-window').style.display = 'block';
+
+            // blokujemy przejście do kolejnego okna
+            event.preventDefault();
+        }
+    });
+
+    document.getElementById('close-bt-pop-up-button').addEventListener('click', () => {
+        document.getElementById('bt-pop-up-window').style.display = 'none';
+    });
+
+    document.getElementById('bt-pop-up-window').addEventListener('click', (e) => {
+        if(!e.target.matches('#bt-pop-up-content-window') && !e.target.matches('#bt-pop-up-text')) {
+            document.getElementById('bt-pop-up-window').style.display = 'none';
+        }
+    });
+</script>

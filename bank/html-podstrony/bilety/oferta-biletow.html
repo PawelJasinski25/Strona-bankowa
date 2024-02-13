@@ -1,0 +1,131 @@
+<link href="css/bilety/oferta-biletow-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="main-section">
+    <div id="category-title"> Kategorie </div>
+    <div id="category-row">
+        <button class="category-button" onclick="showContent('choice-mpk')">Bilety MPK</button>
+        <button class="category-button" onclick="showContent('choice-pr')">Park & Ride</button>
+        <button class="category-button" onclick="showContent('choice-autostrady')">Autostrady</button>
+    </div>
+    <hr>
+    <div id="choice-mpk" class="choice">
+        <div class="ticket-list">
+            <button class="ticket-wrapper">
+                <span id="MPK-U1" class="ticket">
+                    <img src="obrazki\MPK-U1.png" alt="MPK-U1 img">
+                </span>
+                <span class="ticket-text">MPK - ulgowy, 1 miesiąc<br></span>
+                <span class="ticket-text"> 79,50 zł </span>
+            </button>
+            <button class="ticket-wrapper">
+                <span id="MPK-U2" class="ticket">
+                    <img src="obrazki\MPK-U2.png" alt="MPK-U2 img">
+                </span>
+                <span class="ticket-text">MPK - ulgowy, 2 miesiące<br></span>
+                <span class="ticket-text"> 159,00 zł </span>
+            </button>
+            <button class="ticket-wrapper">
+                <span id="MPK-U3" class="ticket">
+                    <img src="obrazki\MPK-U3.png" alt="MPK-U3 img">
+                </span>
+                <span class="ticket-text">MPK - ulgowy, 3 miesiące<br></span>
+                <span class="ticket-text"> 238,50 zł </span>
+            </button>
+            <button class="ticket-wrapper">
+                <span id="MPK-N1" class="ticket">
+                    <img src="obrazki\MPK-N1.png" alt="MPK-N1 img">
+                </span>
+                <span class="ticket-text">MPK - normalny, 1 miesiąc<br></span>
+                <span class="ticket-text"> 159,00 zł </span>
+            </button>
+            <button class="ticket-wrapper">
+                <span id="MPK-N2" class="ticket">
+                    <img src="obrazki\MPK-N2.png" alt="MPK-N2 img">
+                </span>
+                <span class="ticket-text">MPK - normalny, 2 miesiące<br></span>
+                <span class="ticket-text"> 318,00 zł </span>
+            </button>
+            <button class="ticket-wrapper">
+                <span id="MPK-N3" class="ticket">
+                    <img src="obrazki\MPK-N3.png" alt="MPK-N3 img">
+                </span>
+                <span class="ticket-text">MPK - normalny, 3 miesiące<br></span>
+                <span class="ticket-text"> 477,00 zł </span>
+            </button>
+        </div>
+    </div>
+
+    <div id="choice-pr" class="choice">
+        <div class="category-text"> Bilety jednodniowe, dla 1 osoby </div>
+        <div class="ticket-list">
+            <button class="ticket-wrapper">
+                <span id="P&R-KRK" class="ticket">
+                    <img src="obrazki\P+R_KRK.png" alt="P&R-KRK img">
+                </span>
+                <span class="ticket-text">Park & Ride Kraków<br></span>
+                <span class="ticket-text"> 10 zł </span>
+            </button>
+            <div class="ticket-wrapper"></div>
+            <div class="ticket-wrapper"></div>
+        </div>
+    </div>
+
+    <div id="choice-autostrady" class="choice">
+        <div class="category-text"> Samochody osobowe </div>
+        <div class="ticket-list">
+            <button class="ticket-wrapper">
+                <span id="A4-KRK-KAT" class="ticket">
+                    <img src="obrazki\A4-KRK-KAT.png" alt="A4-KRK-KAT img">
+                </span>
+                <span class="ticket-text">Autostrada A4 <br> Kraków Katowice<br></span>
+                <span class="ticket-text"> 15 zł </span>
+            </button>
+            <button class="ticket-wrapper">
+                <span id="A2-KON-SWCK" class="ticket">
+                    <img src="obrazki\A2-KON-SWCK.png" alt="A2-KON-SWCK img">
+                </span>
+                <span class="ticket-text">Autostrada A2 <br> Konin Świecko<br></span>
+                <span class="ticket-text"> 108 zł </span>
+            </button>
+            <div class="ticket-wrapper"></div>
+        </div>
+    </div>
+    <div id="button-container">
+        <button id="return-button" class="blue-button" type="button">Powrót</button>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function showContent(choiceId) {
+        const choiceContents = document.getElementsByClassName('choice');
+        for (const element of choiceContents) {
+            element.classList.remove('active-choice');
+        }
+
+        const selectedChoiceContent = document.getElementById(choiceId);
+        if (selectedChoiceContent) {
+            selectedChoiceContent.classList.add('active-choice');
+        }
+    }
+
+    // onload
+    function showDefaultTicketOfferContent() {
+        showContent('choice-mpk');
+    }
+
+    $('.ticket-wrapper').click((event) => {
+        const ticketText = $(event.currentTarget).find('.ticket-text:first').text().trim();
+        const ticketPrice = $(event.currentTarget).find('.ticket-text:last').text().trim();
+
+        BankStorage.setTicketName(ticketText);
+        BankStorage.setTicketPrice(ticketPrice.replace(/[^\d.,]+/g, ''));
+
+        loadTicketPurchasePage();
+    });
+
+    $('#return-button').click(() => {
+        loadTicketsPage();
+    });
+</script>

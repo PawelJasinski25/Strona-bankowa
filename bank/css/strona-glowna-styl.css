@@ -1,0 +1,167 @@
+#left-column {
+    flex: 0.6;
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+#right-column {
+    flex: 0.4;
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.homepage-section {
+    background-color: white;
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+}
+
+.homepage-section-header {
+    font-size: 1.75em;
+}
+
+.tile {
+    background-color: white;
+    border: 2px solid #dddddd;
+    border-radius: 5px;
+    padding: 20px;
+    font-size: 1.33em;
+    overflow-x: auto;
+}
+
+#transaction-list .tile {
+    margin: 10px 0;
+}
+
+#account-state .tile {
+    margin-top: 20px;
+}
+
+.tile-first-row {
+    font-weight: bold;
+}
+
+.tile-second-row {
+    font-size: smaller;
+}
+
+.tile-third-row {
+    text-align: right;
+}
+
+#statistics .homepage-section-header {
+    display: inline-block;
+}
+
+#account-state {
+    margin-bottom: 30px;
+}
+
+#statistics {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#time-period-select {
+    float: right;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1.1em;
+}
+
+.diagram-type-label-container {
+    display: inline;
+    text-wrap: nowrap;
+}
+
+#radio-buttons {
+    text-align: center;
+}
+
+#radio-buttons label {
+    margin-left: 20px;
+    font-size: 1.33em;
+}
+
+#statistics img {
+    width: 100%;
+}
+
+#transactions {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#transaction-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+#button-container {
+    margin-top: 10px;
+    text-align: right;
+}
+
+@media screen and (max-width: 1100px) {
+    main {
+        flex-direction: column;
+    }
+
+    #left-column, #right-column {
+        flex: 1;
+    }
+
+    .homepage-section {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    #account-state, #statistics {
+        margin-bottom: 30px;
+    }
+
+    .tile {
+        margin-top: 20px;
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .homepage-section {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    #left-column, #right-column {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #time-period-select {
+        float: none;
+        margin-top: 20px;
+    }
+
+    #statistics-first-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .homepage-section {
+        padding: 12.5px;
+    }
+
+    .tile {
+        padding: 15px;
+    }
+}

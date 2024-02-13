@@ -1,0 +1,143 @@
+<link href="css/strona-glowna-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="left-column">
+    <div id="account-state" class="homepage-section">
+        <div class="homepage-section-header">Stan konta</div>
+        <div class="tile">
+            <div id="account-name" class="tile-first-row"></div>
+            <div id="account-number" class="tile-second-row"></div>
+            <div id="available-funds" class="tile-third-row"></div>
+        </div>
+    </div>
+    <div id="statistics" class="homepage-section">
+        <div id="statistics-first-row">
+            <div class="homepage-section-header">Statystyki</div>
+            <select id="time-period-select" name="time-period" onchange="updateDiagram()">
+                <option value="week">Poprzedni tydzień</option>
+                <option value="month">Poprzedni miesiąc</option>
+                <option value="year">Poprzedni rok</option>
+            </select>
+        </div>
+        <div id="radio-buttons">
+            <div class="diagram-type-label-container">
+                <label for="expenses">Wydatki</label>
+                <input type="radio" id="expenses" name="diagram-type" value="expenses" checked onchange="updateDiagram()">
+            </div>
+            <div class="diagram-type-label-container">
+                <label for="revenues">Przychody</label>
+                <input type="radio" id="revenues" name="diagram-type" value="revenues" onchange="updateDiagram()">
+            </div>
+        </div>
+        <img id="expenses-week" src="obrazki/wydatki-tydzien.png" alt="wydatki-tydzien">
+        <img id="expenses-month" src="obrazki/wydatki-miesiac.png" alt="wydatki-miesiac">
+        <img id="expenses-year" src="obrazki/wydatki-rok.png" alt="wydatki-rok">
+        <img id="revenues-week" src="obrazki/przychody-tydzien.png" alt="przychody-tydzien">
+        <img id="revenues-month" src="obrazki/przychody-miesiac.png" alt="przychody-miesiac">
+        <img id="revenues-year" src="obrazki/przychody-rok.png" alt="przychody-rok">
+    </div>
+</div>
+<div id="right-column">
+    <div id="transactions" class="homepage-section">
+        <div class="homepage-section-header">Transakcje</div>
+        <div id="transaction-list">
+            <div id="transaction-top" class="tile">
+                <div class="tile-first-row"></div>
+                <div class="tile-second-row"></div>
+                <div class="tile-third-row"></div>
+            </div>
+            <div id="transaction-middle" class="tile">
+                <div class="tile-first-row"></div>
+                <div class="tile-second-row"></div>
+                <div class="tile-third-row"></div>
+            </div>
+            <div id="transaction-bottom" class="tile">
+                <div class="tile-first-row"></div>
+                <div class="tile-second-row"></div>
+                <div class="tile-third-row"></div>
+            </div>
+        </div>
+        <div id="button-container">
+            <a id="more-transactions-button" class="blue-button" type="button">Więcej</a>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function updateDiagram() {
+        const timePeriod = document.getElementById("time-period-select").value;
+        const diagramType = document.querySelector('input[name="diagram-type"]:checked').value;
+
+        document.getElementById(diagramName).style.display = "none";
+
+        diagramName = `${diagramType}-${timePeriod}`;
+        document.getElementById(diagramName).style.display = "block";
+    }
+
+    // onload
+    function initializeDiagrams() {
+        document.getElementById("expenses-week").style.display = "block";
+        document.getElementById("expenses-month").style.display = "none";
+        document.getElementById("expenses-year").style.display = "none";
+        document.getElementById("revenues-week").style.display = "none";
+        document.getElementById("revenues-month").style.display = "none";
+        document.getElementById("revenues-year").style.display = "none";
+    }
+
+    function fillMissingContent() {
+        const username = BankStorage.getUsername();
+        const accountName = BankStorage.getAccountName();
+        const accountNumber = BankStorage.getAccountNumber();
+        const availableFunds = BankStorage.getAvailableFunds();
+        const transactions = BankStorage.getTransactions();
+        const lastThree = transactions.slice(-3).reverse();
+
+        const accountNameDiv = document.getElementById('account-name');
+        const accountNumberDiv = document.getElementById('account-number');
+        const availableFundsDiv = document.getElementById('available-funds');
+        const transactionDivIDs = ['transaction-top', 'transaction-middle', 'transaction-bottom'];
+        const rowClasses = ['tile-first-row', 'tile-second-row', 'tile-third-row'];
+
+        accountNameDiv.innerHTML = accountName;
+        accountNumberDiv.innerHTML = longFormatAccNum(accountNumber);
+        availableFundsDiv.innerHTML = formatMoney(availableFunds);
+
+        for (let i = 0; i < 3; i++) {
+            const transaction = lastThree[i];
+
+            const firstRow = document.querySelector(`#${transactionDivIDs[i]} .${rowClasses[0]}`);
+            const secondRow = document.querySelector(`#${transactionDivIDs[i]} .${rowClasses[1]}`);
+            const thirdRow = document.querySelector(`#${transactionDivIDs[i]} .${rowClasses[2]}`);
+
+            firstRow.innerHTML = trimIfTooLong(transaction.title, 16);
+            secondRow.innerHTML = transaction.date;
+            thirdRow.innerHTML = formatMoney(transaction.amount);
+
+            if (transaction.type === EXPENSE) {
+                thirdRow.classList.add('expense');
+            }
+
+            if (transaction.type === REVENUE) {
+                thirdRow.classList.add('revenue');
+            }
+        }
+
+        document.getElementById("username").innerHTML = username;
+    }
+
+    // onload
+    function initializeHomePage() {
+        let accountName = BankStorage.getAccountName();
+
+        if (accountName === null) {
+            BankStorage.initialize();
+        }
+
+        fillMissingContent();
+    }
+
+    $('#more-transactions-button').click(() => {
+        loadTransactionsPage();
+    });
+</script>

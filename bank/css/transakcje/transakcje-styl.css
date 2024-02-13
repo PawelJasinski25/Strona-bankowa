@@ -1,0 +1,132 @@
+main {
+    justify-content: center;
+}
+
+#outer-container {
+    width: 100%;
+    /*max-width: 1100px;*/
+    padding: 25px;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+#outer-container > div {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#search-bar-container {
+    width: 100%;
+    display: flex;
+}
+
+#search-bar {
+    width: 100%;
+    outline: none;
+    padding: 6px 0 6px 12px;
+    border: 1px solid #cfcfcf;
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+}
+
+#search-bar:focus, #search-bar:focus + #search-bar-cross {
+    border-color: #8b8b8b;
+    background-color: #ededed;
+}
+
+#search-bar-cross {
+    width: 30px;
+    font-size: 1.5em;
+    text-align: center;
+    border: 1px solid #cfcfcf;
+    border-left: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+#search-filters-container {
+    display: flex;
+    justify-content: center;
+}
+
+.radio-container {
+    margin: 0 20px;
+    text-wrap: nowrap;
+}
+
+.month {
+    font-size: 1.55em;
+    padding-top: 30px;
+}
+
+.transaction-tile {
+    border: 2px solid #dddddd;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    font-size: 1.33em;
+    overflow-x: auto;
+    cursor: pointer;
+}
+
+.transaction-tile:hover {
+    background-color: #efefef;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.date {
+    font-size: 0.9em;
+}
+
+.amount {
+    text-align: right;
+}
+
+.index {
+    display: none;
+}
+
+@media screen and (max-width: 450px) {
+    #search-bar-container {
+        font-size: 1.05em !important;
+    }
+
+    #search-filters-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .radio-container {
+        margin: 6px 0;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    #outer-container {
+        padding: 13px;
+    }
+
+    #outer-container > div {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #search-filters-container {
+        margin-top: 10px !important;
+    }
+
+    .month {
+        font-size: 1.33em;
+    }
+
+    .transaction-tile {
+        font-size: 1.1em;
+        padding: 13px;
+    }
+}

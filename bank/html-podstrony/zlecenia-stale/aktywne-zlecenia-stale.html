@@ -1,0 +1,165 @@
+<link href="css/zlecenia-stale/aktywne-zlecenia-stale-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="content">
+    <div id="pop-up-window" class="pop-up">
+        <div id="pop-up-content-window" class="pop-up-content">
+            <span id="close-pop-up-button" class="close-pop-up">&times;</span>
+            <div class="pop-up-header">Szczegóły</div>
+            <hr>
+            <div id="pop-up-text" class="container pop-up-text">
+                <div class="info-container">
+                    <div class="info-type">Nadawca:</div>
+                    <div id="from-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Beneficjent:</div>
+                    <div id="beneficiary-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Numer beneficjenta:</div>
+                    <div id="to-number-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Tytuł:</div>
+                    <div id="title-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Kwota:</div>
+                    <div id="amount-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Data rozpoczęcia:</div>
+                    <div id="start-date-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Częstotliwość:</div>
+                    <div id="frequency-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Data zakończenia:</div>
+                    <div id="end-date-info" class="info-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="order-information" class="homepage-section">
+        <div id="no-orders" class="no-orders-text">Brak aktywnych zleceń stałych</div>
+        <div id="button-container">
+            <button id="return-button" class="blue-button" type="button">Powrót</button>
+            <button id="new-order-button" class="blue-button" type="button">Nowe zlecenie</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    
+    // onload
+    function standingOrderInit() {
+        const orderInformation = document.getElementById('order-information');
+        const buttonContainer = document.getElementById('button-container');
+        const noOrders = document.getElementById('no-orders')
+
+        let orderList = BankStorage.getStandingOrders();
+
+        if (orderList.length === 0) {
+            noOrders.style.display = 'block';
+        } else {
+            noOrders.style.display = 'none';
+        }
+
+        orderList.forEach(order => {
+            const orderElement = document.createElement('div');
+            orderElement.classList.add('order-information-element');
+
+            const leftColumn = document.createElement('div');
+            leftColumn.classList.add('left-column');
+
+            const orderLeftColumnElement = document.createElement('div');
+            orderLeftColumnElement.classList.add('order-left-column-element');
+            orderLeftColumnElement.textContent = order.title;
+
+            leftColumn.appendChild(orderLeftColumnElement);
+
+            const rightColumn = document.createElement('div');
+            rightColumn.classList.add('right-column');
+
+            const firstRow = document.createElement('div');
+            firstRow.classList.add('first-row');
+            firstRow.textContent = `Data zakończenia: ${formatIfTermless(order.endDate)}`;
+
+            const secondRow = document.createElement('div');
+            secondRow.classList.add('second-row');
+
+            const detailsElement = document.createElement('div');
+            detailsElement.classList.add('second-row-element', 'details');
+            detailsElement.textContent = 'Szczegóły';
+
+            const deleteElement = document.createElement('div');
+            deleteElement.classList.add('second-row-element');
+            deleteElement.textContent = 'Usuń';
+            deleteElement.addEventListener("click", () => {
+
+                if (confirm("Czy jesteś pewny/a, że chcesz usunąć wybrane zlecenie stałe?")) {
+                    BankStorage.removeStandingOrder(order);
+                    loadStandingOrdersPage();
+                    loadActiveStandingOrdersPage();
+                    alert("Usunięto zlecenie stałe: " + order.title);
+                }
+            });
+
+            secondRow.appendChild(detailsElement);
+            secondRow.appendChild(deleteElement);
+
+            rightColumn.appendChild(firstRow);
+            rightColumn.appendChild(secondRow);
+
+            orderElement.appendChild(leftColumn);
+            orderElement.appendChild(rightColumn);
+
+            orderInformation.insertBefore(orderElement, buttonContainer);
+        });
+
+        $('#return-button').click(() => {
+            loadStandingOrdersPage();
+        });
+
+        $('#new-order-button').click(() => {
+            loadNewStandingOrderPage();
+        });
+    }
+
+    function updateOrderDetails(selectedOrder) {
+        document.getElementById('pop-up-text').scrollTo(0,0);
+        document.getElementById('from-info').textContent = selectedOrder.from;
+        document.getElementById('beneficiary-info').textContent = selectedOrder.beneficiary;
+        document.getElementById('to-number-info').textContent = selectedOrder.toNumber;
+        document.getElementById('title-info').textContent = selectedOrder.title;
+        document.getElementById('amount-info').textContent = formatMoney(selectedOrder.amount);
+        document.getElementById('start-date-info').textContent = selectedOrder.startDate;
+        document.getElementById('frequency-info').textContent = formatFrequency(selectedOrder.frequency);
+        document.getElementById('end-date-info').textContent = formatIfTermless(selectedOrder.endDate);
+    }
+
+    // onload
+    function standingOrderInformations() {
+        let modal = document.getElementById("pop-up-window");
+        let close = document.getElementById("close-pop-up-button");
+        let buttons = document.getElementsByClassName("details");
+
+        let orderList = BankStorage.getStandingOrders();
+
+        for (let i = 0; i < buttons.length; i++) {
+            setupPopup(modal, buttons[i], close);
+
+            let selectedOrder = orderList[i];
+
+            $(buttons[i]).click(function() {
+                updateOrderDetails(selectedOrder);
+            });
+        }
+    }
+
+</script>

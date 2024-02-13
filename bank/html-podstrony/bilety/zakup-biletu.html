@@ -1,0 +1,165 @@
+<link href="css/bilety/bilet-wspolne-styl.css" type="text/css" rel="stylesheet">
+<link href="css/bilety/zakup-biletu-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="content">
+    <div id="choosen-ticket" class="homepage-section">
+        <div class="homepage-section-header">Wybrany bilet</div>
+        <div class="choosen-ticket-name">
+            <div id="ticket-name" class="tile-first-row"></div>
+        </div>
+    </div>
+
+    <div id="ticket-information" class="homepage-section">
+        <div class="homepage-section-header">Dane</div>
+
+        <div class="ticket-information-header">Imię i Nazwisko</div>
+        <div class="ticket-information-element special-background">
+            <div id="name" class="tile"></div>
+        </div>
+
+        <label for="date" class="ticket-information-header">Data rozpoczęcia</label>
+        <input type="date" id="date" name="date-start" class="date-input"/>
+
+        <div id="date-error-box" class="error-box"></div>
+
+        <div class="ticket-information-header">Kwota</div>
+        <div class="ticket-information-element special-background">
+            <div id="amount" class="tile"></div>
+        </div>
+
+        <div id="amount-error-box" class="error-box"></div>
+
+        <div id="button-container">
+            <button id="return-button" class="blue-button" type="button">Powrót</button>
+            <button id="confirm-button" class="blue-button" type="button">Kup</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>           
+    // onload
+    function initializeBuyPage() {
+        document.getElementById('date').min = getCurrentDate();
+        document.getElementById('date').value = getCurrentDate();
+
+        insertContentInto('#name', BankStorage.getUsername());
+        insertContentInto('.choosen-ticket-name .tile-first-row', BankStorage.getTicketName());
+        insertContentInto('#amount', formatMoney(BankStorage.getTicketPrice()));
+
+        $('#date').change(() => {
+            validateTicketPurchase();
+        });
+
+        $('#return-button').click(() => {
+            loadTicketsOfferPage();
+        });
+
+        $('#confirm-button').click(() => {
+            const title = BankStorage.getTicketName();
+            const date = getCurrentDate().split('-').reverse().join('.');
+            const amount = BankStorage.getTicketPrice();
+
+            const dateValue = document.getElementById('date').value;
+            const startDate = new Date(dateValue);
+            const validFrom = ddmmyyyyFormat(startDate);
+            
+            const endDate = new Date(dateValue);
+            const daysToAdd = expMap.get(title);
+
+            if (daysToAdd < 0) {
+                let absNum = Math.abs(daysToAdd);
+                endDate.setMonth(endDate.getMonth() + absNum);
+                endDate.setDate(endDate.getDate() - 1);
+            } else {
+                endDate.setDate(endDate.getDate() + daysToAdd);
+            }
+
+            const validTo = ddmmyyyyFormat(endDate);
+
+            const owner = BankStorage.getUsername();
+
+            const ticket = new Ticket(validFrom, validTo, owner, title, date, amount);
+
+            BankStorage.makeATransaction(ticket);
+            BankStorage.buyATicket(ticket);
+
+            loadTicketConfirmationPage();
+        });
+    }
+
+    // onload
+    function validateTicketPurchase() {
+        const confirmButton = document.getElementById('confirm-button');
+
+        const dateOK = validateTicketStartDate();
+        const priceOK = validateTicketPrice();
+
+        if (!dateOK || !priceOK) {
+            confirmButton.style.backgroundColor = '#b9b6b6';
+            confirmButton.disabled = true;
+        }
+        else {
+            confirmButton.style.backgroundColor = '';
+            confirmButton.disabled = false;
+        }
+    }
+
+    function validateTicketStartDate() {
+        const dateErrorBox = document.getElementById('date-error-box');
+        const dateInputField = document.getElementById('date');
+        const dateValue = dateInputField.value;
+        const inputDate = new Date(dateValue);
+        const currentDate = new Date();
+
+        inputDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+
+        if (dateInputField.value === '' || inputDate < currentDate) {
+            dateErrorBox.innerHTML = ERRORMESSAGE1;
+            dateErrorBox.style.display = 'block';
+            dateInputField.classList.add('wrong-input');
+            dateErrorBox.style.marginBottom = '0';
+
+            return false;
+        }
+        else {
+            dateErrorBox.style.display = 'none';
+            dateInputField.classList.remove('wrong-input');
+
+            return true;
+        }
+    }
+
+    function validateTicketPrice() {
+        let ok;
+
+        const amountErrorBox = document.getElementById('amount-error-box');
+        const amountInputField = document.getElementById('amount');
+        const amountValue = parseFloat(amountInputField.innerText.replace(/[^\d.,]+/g, ''));
+        const ticketContainer = amountInputField.closest('.ticket-information-element');
+
+        const msg = Ticket.handleTicketAmount(amountValue, BankStorage.getAvailableFunds());
+
+        if (msg === TOO_MUCH) {
+            amountErrorBox.innerHTML = ERRORMESSAGE2;
+            amountErrorBox.style.display = 'block';
+            amountInputField.classList.add('wrong-input');
+            ticketContainer.classList.add('wrong-input');
+            amountErrorBox.style.marginBottom = '0';
+
+            ok = false;
+        }
+
+        if (msg === OK) {
+            amountErrorBox.style.display = 'none';
+            amountInputField.classList.remove('wrong-input');
+            ticketContainer.classList.remove('wrong-input');
+
+            ok = true;
+        }
+
+        return ok;
+    }
+</script>

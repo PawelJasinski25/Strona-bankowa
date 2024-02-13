@@ -1,0 +1,47 @@
+<link href="css/bilety/bilet-wspolne-styl.css" type="text/css" rel="stylesheet">
+<link href="css/bilety/bilet-potwierdzenie-styl.css" type="text/css" rel="stylesheet">
+<link href="css/pusty-naglowek-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="content">
+    <div id="ticket-confirmation" class="homepage-section">
+        <div class="ticket-confirmation-header" >Bilet został kupiony</div>
+
+        <div class="ticket-confirmation-element">
+            <div class="ticket-confirmation-element-text"></div>
+        </div>
+
+        <div class="ticket-confirmation-element">
+            <div class="ticket-confirmation-element-text">Zakupione bilety są dostępne w zakładce "Bilety" oraz w aplikacji mobilnej</div>
+        </div>
+
+        <div class="print-ticket">
+            <a href="">Drukuj bilet</a>
+        </div>
+
+        <div id="button-container">
+            <button id="bought-tickets-button" class="blue-button" type="button">Zakupione bilety</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function displayTicketName() {
+        insertContentInto('.ticket-confirmation-element-text', BankStorage.getTicketName());
+    }
+
+    document.getElementsByClassName('print-ticket')[0].firstElementChild.addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Symulacja: teraz następuje przeniesienie do panelu drukowania i drukowanie biletu");
+    })
+
+    $('#return-button').click(() => {
+        loadHomePage();
+    });
+
+    $('#bought-tickets-button').click(() => {
+        loadBoughtTicketsPage();
+    });
+</script>

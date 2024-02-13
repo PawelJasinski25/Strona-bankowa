@@ -1,0 +1,166 @@
+<link href="css/karty/karty-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="content">
+    <div id="pop-up-window" class="pop-up">
+        <div id="pop-up-content-window" class="pop-up-content">
+            <span id="close-pop-up-button" class="close-pop-up">&times;</span>
+            <div class="pop-up-header">Szczegóły</div>
+            <hr>
+            <div id="pop-up-text" class="container pop-up-text">
+                <div class="info-container">
+                    <div class="info-type">Numer karty:</div>
+                    <div id="card-number-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Rachunek powiązany:</div>
+                    <div id="account-name-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Posiadacz:</div>
+                    <div id="owner-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Karta ważna od:</div>
+                    <div id="valid-from-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Karta ważna do:</div>
+                    <div id="valid-to-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Płatności:</div>
+                    <div class="info-content">1 500,00 zł</div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Wypłaty:</div>
+                    <div class="info-content">100,00 zł</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section id="card-information" class="page-section">
+        <h2 id="section-name" class="mb-5">Twoje karty</h2>
+        <div id="card-1" class="card-information-element">
+            <div class="curtain-text">
+                <div>Zastrzeżona</div>
+            </div>
+            <div class="p-3 custom-padding">
+                <div class="curtain"></div>
+                <div class="left-column">
+                    <img src="obrazki/card-1.png" alt="karta">
+                </div>
+                <div class="right-column">
+                    <div>Numer karty: 1212 4324 2343 3473</div>
+                    <div class="card-information-second-row">
+                        <span>Ważność: 11/24</span>
+                        <div class="card-btns-container">
+                            <a id="card-a-1" class="">Szczegóły</a>
+                            <button id="card-1-button" class="btn btn-danger">Zastrzeż kartę</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="card-2" class="card-information-element">
+            <div class="curtain-text">
+                <div>Zastrzeżona</div>
+            </div>
+            <div class="p-3 custom-padding">
+                <div class="curtain"></div>
+                <div class="left-column">
+                    <img src="obrazki/card-2.png" alt="karta">
+                </div>
+                <div class="right-column">
+                    <div class="media-text">Numer karty: 4322 6467 3456 5657</div>
+                    <div class="card-information-second-row">
+                        <span>Ważność: 05/25</span>
+                        <div class="card-btns-container">
+                            <a id="card-a-2" class="">Szczegóły</a>
+                            <button id="card-2-button" class="btn btn-danger">Zastrzeż kartę</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="card-3" class="card-information-element">
+            <div class="curtain-text">
+                <div>Zastrzeżona</div>
+            </div>
+            <div class="p-3 custom-padding">
+                <div class="curtain"></div>
+                <div class="left-column">
+                    <img src="obrazki/card-3.png" alt="karta">
+                </div>
+                <div class="right-column">
+                    <div>Numer karty: 1275 3333 7846 8955</div>
+                    <div class="card-information-second-row">
+                        <span>Ważność: 02/27</span>
+                        <div class="card-btns-container">
+                            <a id="card-a-3" class="">Szczegóły</a>
+                            <button id="card-3-button" class="btn btn-danger">Zastrzeż kartę</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function initializeCardsPage() {
+        cardDetailsInitialization();
+
+        $('button').click(function() {
+            BankStorage.setPendingCardBlock(this.id.slice(0, -7));
+
+            let container = document.getElementById(this.id).closest("div.right-column");
+            let cardNumber = container.children[0].textContent.slice(13);
+            let validTo = container.children[1].children[0].textContent.slice(9);
+
+            BankStorage.setPendingCardBlockInformation(cardNumber, validTo);
+
+            loadCancelCardPage();
+        });
+
+        let blockedCards = BankStorage.getBlockedCards();
+
+        if (blockedCards !== undefined && blockedCards !== null) {
+            for (let card of blockedCards) {
+                let c = document.querySelectorAll("#" + card + " [class^='curtain']");
+                c.forEach((x) => x.style.display = "flex");
+                document.querySelector("#" + card + " [class^='curtain']").nextElementSibling.style.filter = 'blur(6px)';
+            }
+        }
+    }
+
+    function cardDetailsInitialization() {
+        let modal = document.getElementById("pop-up-window");
+        let buttons = $('[id^="card-a-"]');
+        let close = document.getElementById("close-pop-up-button");
+
+        document.getElementById("account-name-info").innerHTML = BankStorage.getAccountName();
+        document.getElementById("owner-info").innerHTML = BankStorage.getUsername();
+
+        for (let button of buttons) {
+            setupPopup(modal, button, close);
+            
+            $(button).click(function() {
+                updateCardDetails(button);
+            });
+        }
+    }
+
+    function updateCardDetails(button) {
+        let container = document.getElementById(button.id).closest("div.right-column");
+        let cardNumber = container.children[0].textContent.slice(13);
+        let validTo = container.children[1].children[0].textContent.slice(9);
+        let validFrom = validTo.slice(0, 3) + (Number(validTo.slice(-2)) - 4) % 100;
+        document.getElementById('pop-up-text').scrollTo(0,0);
+        document.getElementById("card-number-info").innerHTML = cardNumber;
+        document.getElementById("valid-from-info").innerHTML = validFrom;
+        document.getElementById("valid-to-info").innerHTML = validTo;
+    }
+</script>

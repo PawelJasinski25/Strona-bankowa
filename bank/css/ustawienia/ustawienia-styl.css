@@ -1,0 +1,123 @@
+.tab-content, .tab-content > div, .checkboxes {
+    flex: 1;
+}
+
+.checkboxes {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-bottom: 1.5rem !important;
+}
+
+input[type="checkbox"] {
+    border: 2px solid black;
+}
+
+label {
+    display: block;
+    text-align: left !important;
+}
+
+.nav-tabs .nav-link {
+    border: 2px solid transparent;
+}
+
+.tab-pane {
+    justify-content: center;
+}
+
+.page-section, .tab-content, .tab-pane {
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-content > .show {
+    display: flex;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff !important;
+}
+
+.nav-tabs {
+    display: flex;
+}
+
+.center * {
+    margin: auto;
+}
+
+#content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.page-section {
+    background-color: white;
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+    min-height: 90%;
+}
+
+.page-section * {
+    text-align: center;
+}
+
+.page-section > nav:after {
+    content: '';
+    display: block;
+    height: 20px;
+}
+
+#nav-tab > button {
+    overflow: hidden;
+}
+
+.checkboxes-section {
+    margin: 10px 0;
+}
+
+.checkboxes-section > div {
+    margin: 10px 0;
+}
+
+.settings-subtitle {
+    text-align: left;
+    font-size: 1.25em;
+}
+
+@media (max-width: 575px) {
+    .page-section nav *, .tab-content {
+        font-size: 0.85rem !important;
+    }
+
+    .settings-subtitle {
+        font-size: 1.05rem !important;
+    }
+
+    .form-check input {
+        font-size: initial !important;
+    }
+}
+
+@media (max-width: 540px) {
+    .nav-tabs button {
+        padding: 0 !important;
+    }
+}
+
+@media (max-width: 450px) {
+    .nav-tabs button {
+        font-size: 90% !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .page-section {
+        padding: 15px;
+    }
+}

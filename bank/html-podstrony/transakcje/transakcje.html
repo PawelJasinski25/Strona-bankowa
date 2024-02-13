@@ -1,0 +1,450 @@
+<link href="css/transakcje/transakcje-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="outer-container">
+    <div id="search-bar-container">
+        <input type="text" id="search-bar" placeholder="Szukaj po tytule...">
+        <div id="search-bar-cross">&times;</div>
+    </div>
+    <div id="search-filters-container">
+        <div class="radio-container">
+            <label for="all">Wszystko</label>
+            <input type="radio" id="all" name="transaction-filter" value="all">
+        </div>
+        <div class="radio-container">
+            <label for="expenses">Wydatki</label>
+            <input type="radio" id="expenses" name="transaction-filter" value="expenses">
+        </div>
+        <div class="radio-container">
+            <label for="revenues">Przychody</label>
+            <input type="radio" id="revenues" name="transaction-filter" value="revenues">
+        </div>
+    </div>
+
+    <!-- Struktura 'Szablon 1' idzie tutaj (patrz: na samym dole strony) -->
+    <div id="transaction-list-container"></div>
+</div>
+
+<div id="pop-up-window" class="pop-up">
+    <div id="pop-up-content-window" class="pop-up-content">
+        <span id="close-pop-up-button" class="close-pop-up">&times;</span>
+        <div id="pop-up-title" class="pop-up-header">Szczegóły</div>
+        <hr>
+
+        <!-- Struktura 'Szablon 2' idzie tutaj (patrz: na samym dole strony) -->
+        <!-- <div id="pop-up-text" class="container pop-up-text"></div> -->
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function initializeTransactionsPage() {
+        document.getElementById("all").checked = true;
+
+        initializeTransactionList();
+
+        const transactionsTiles = document.getElementsByClassName('transaction-tile');
+
+        for (let tile of transactionsTiles) {
+            initializeTile(tile);
+        }
+    }
+
+    function initializeTransactionList() {
+        const transactions = BankStorage.getTransactions();
+        const sortedByMonth = sortByMonth(transactions);
+
+        const transactionListContainer = document.getElementById('transaction-list-container');
+
+        const monthTransactionsDivs = createMonthTransactionsDivs(sortedByMonth);
+
+        monthTransactionsDivs.forEach(div => transactionListContainer.appendChild(div));
+    }
+
+    function sortByMonth(transactions) {
+        // Przypisz daną transakcję do miesiąca, w którym nastąpiła transakcja i zapamiętaj pozycję transakcji w oryginalnej tablicy transakcji
+        const sortedByMonth = transactions.reduce((result, transaction, index) => {
+            const polishMonthName = getPolishMonthName(transaction.date);
+            const year = transaction.date.slice(-4);
+            const key = `${polishMonthName} ${year}`;
+
+            if (!result[key]) {
+                result[key] = [];
+            }
+
+            result[key].push({ 'index': index, 'transaction': transaction });
+
+            return result;
+        }, {});
+
+        // Utwórz tablicę obiektów, gdzie każdy obiekt zawiera nazwę miesiąca i wszystkie transakcje wykonane w tym miesiącu
+        const finalArray = Object.keys(sortedByMonth).map(key => {
+            return { 'monthName': key, 'transactionsInMonth': sortedByMonth[key] };
+        });
+
+        // Posortuj od najpóźniejszego miesiąca do najwcześniejszego miesiąca
+        finalArray.sort((a, b) => {
+            const [monthA, yearA] = a.monthName.split(' ');
+            const [monthB, yearB] = b.monthName.split(' ');
+
+            if (yearA !== yearB) {
+                return parseInt(yearA) - parseInt(yearB);
+            }
+
+            const indexA = monthsOrder.indexOf(monthA);
+            const indexB = monthsOrder.indexOf(monthB);
+
+            return indexA - indexB;
+        });
+
+        // Posortuj od najwcześniejszego miesiąca do najpóźniejszego miesiąca
+        finalArray.reverse();
+
+        // Posortuj transakcje od najwcześniejszej do najpóźniejszej "wewnątrz" każdego miesiąca
+        for (let obj of finalArray) {
+            obj.transactionsInMonth.sort((a, b) => {
+                const dateA = new Date(a.transaction.date.split('.').reverse().join('-'));
+                const dateB = new Date(b.transaction.date.split('.').reverse().join('-'));
+                return dateA - dateB;
+            });
+
+            obj.transactionsInMonth.reverse();
+        }
+
+        // Zwróc tablicę obiektów 
+        return finalArray;
+    }
+
+    function getPolishMonthName(transactionDate) {
+        const [day, month, year] = transactionDate.split('.').map(Number);
+        const monthName = new Date(year, month - 1, day).toLocaleString('pl-PL', { month: 'long' });
+        return monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    }
+
+    function createMonthTransactionsDivs(transactionsSortedByMonth) {
+        let monthTransactionDivs = [];
+
+        for (let obj of transactionsSortedByMonth) {
+            const monthName = obj.monthName;
+            const transactionsInMonth = obj.transactionsInMonth;
+
+            const monthTransactions = document.createElement("div");
+            monthTransactions.classList.add("month-transactions");
+
+            const month = document.createElement("div");
+            month.classList.add("month");
+            month.textContent = monthName;
+
+            monthTransactions.appendChild(month);
+
+            for (let innerObj of transactionsInMonth) {
+                const transactionTile = createTransactionTile(innerObj);
+                monthTransactions.appendChild(transactionTile);
+            }
+
+            monthTransactionDivs.push(monthTransactions);
+        }
+
+        return monthTransactionDivs;
+    }
+
+    function createTransactionTile(obj) {
+        const transactionTile = document.createElement("div");
+        transactionTile.classList.add('transaction-tile');
+
+        const index = obj.index;
+        const transaction = obj.transaction;
+
+        const title = transaction.title;
+        const date = transaction.date;
+        const amount = transaction.amount;
+        const type = transaction.type;
+
+        const titleDiv = document.createElement("div");
+        titleDiv.classList.add("title");
+        titleDiv.textContent = title;
+
+        const dateDiv = document.createElement("div");
+        dateDiv.classList.add("date");
+        dateDiv.textContent = date;
+
+        const amountDiv = document.createElement("div");
+        amountDiv.classList.add("amount");
+        amountDiv.textContent = formatMoney(amount);
+
+        if (type === EXPENSE) {
+            amountDiv.classList.add("expense");
+        }
+
+        if (type === REVENUE) {
+            amountDiv.classList.add("revenue");
+        }
+
+        transactionTile.appendChild(titleDiv);
+        transactionTile.appendChild(dateDiv);
+        transactionTile.appendChild(amountDiv);
+
+        const indexDiv = document.createElement("div");
+        indexDiv.classList.add("index");
+        indexDiv.textContent = index;
+        transactionTile.appendChild(indexDiv);
+
+        return transactionTile;
+    }
+
+    function initializeTile(tile) {
+        tile.addEventListener('click', () => {
+            const oldPopUpText = document.getElementById('pop-up-text');
+
+            if (oldPopUpText) {
+                oldPopUpText.parentNode.removeChild(oldPopUpText);
+            }
+
+            const popUpContentWindow = document.getElementById('pop-up-content-window');
+
+            const popUpText = document.createElement('div');
+            popUpText.id = 'pop-up-text';
+            popUpText.classList.add('container');
+            popUpText.classList.add('pop-up-text');
+            
+            const index = tile.getElementsByClassName('index')[0].innerHTML;
+            const transaction = BankStorage.getTransactions()[index];
+
+            let allInfo;
+
+            if (transaction.fromAccount) {
+                allInfo = BankTransfer.getAllInfo(transaction);
+            }
+            else if (transaction.validFrom) {
+                allInfo = Ticket.getAllInfo(transaction);
+            }
+            else if (transaction.title) {
+                allInfo = Transaction.getAllInfo(transaction);
+            }
+            else {
+                throw new Error('unknown transaction type');
+            }
+
+            for (let infoName in allInfo) {
+                const infoContainer = document.createElement('div');
+                infoContainer.classList.add('info-container');
+
+                const infoType = document.createElement('div');
+                infoType.classList.add('info-type');
+                infoType.textContent = infoName + ':';
+
+                const infoContent = document.createElement('div');
+                infoContent.classList.add('info-content');
+                infoContent.textContent = allInfo[infoName];
+
+                infoContainer.appendChild(infoType);
+                infoContainer.appendChild(infoContent);
+
+                popUpText.appendChild(infoContainer);
+            }
+
+            popUpContentWindow.appendChild(popUpText);
+        });
+
+        const modal = document.getElementById("pop-up-window");
+        const close = document.getElementById("close-pop-up-button");
+        setupPopup(modal, tile, close);
+    }
+
+    function filterByRadioBtn() {
+        // Przyciski filtrujące transakcje, możemy mieć: "Wszystko", "Wydatki" albo "Przychody"
+        const allBtn = document.getElementById('all');
+        const expensesBtn = document.getElementById('expenses');
+        const revenuesBtn = document.getElementById('revenues');
+
+        // Można filtrować także po tytule, więc niektóre miesiące mogą być puste (ukryte), bo żadna z ich transakcji nie pasuje do tego filtra
+        const monthTransactions = document.getElementsByClassName('month-transactions');
+        const nonEmptyMonths = Array.from(monthTransactions).filter(transaction => !transaction.classList.contains('invisible'));
+
+        // Odczytanie, który przycisk radio jest wciśnięty
+
+        let filter = "";
+
+        if (allBtn.checked) {
+            filter = "all";
+        }
+        else if (expensesBtn.checked) {
+            filter = "expense";
+        }
+        else if (revenuesBtn.checked) {
+            filter = "revenue";
+        }
+
+        // Sprawdzamy każdy miesiąc z transakcjami, który nie został ukryty przez filtr po tytule
+
+        for (let transaction of nonEmptyMonths) {
+
+            // W każdym takim miesiącu uwzględniamy tylko te transakcje, które nie zostały ukryte przez filtr po tytule
+            const transactionTiles = transaction.getElementsByClassName('transaction-tile');
+            const nonEmptyTiles = Array.from(transactionTiles).filter(tile => !tile.classList.contains('invisible'));
+
+            // Pokazujemy albo wszystkie uwzględniane transakcje, albo tylko wydatki, albo tylko przychody
+            if (filter === "all") {
+                for (let tile of nonEmptyTiles) {
+                    tile.style.display = "";
+                }
+
+                transaction.style.display = "";
+            }
+            else {                
+                for (let tile of nonEmptyTiles) {
+                    const amount = tile.getElementsByClassName('amount')[0];
+
+                    if (amount.classList.contains(filter)) {
+                        tile.style.display = "";
+                    }
+                    else {
+                        tile.style.display = "none";
+                    }
+                }
+            }
+
+            // Jeżeli miesiąc nie został ukryty przez filtr po tytule, to możliwe, że zostanie ukryty teraz przez przycisk radio
+            const isMonthEmpty = Array.from(nonEmptyTiles).every(tile => tile.style.display === "none");
+
+            if (isMonthEmpty) {
+                transaction.style.display = "none";
+            }
+            else {
+                transaction.style.display = "";
+            }
+        }
+    }
+
+    function filterByTitle() {
+        const searchBar = document.getElementById('search-bar');
+        const filter = searchBar.value.toUpperCase();
+        const monthTransactions = document.getElementsByClassName('month-transactions');
+
+        for (let transaction of monthTransactions) {
+            const transactionTiles = transaction.getElementsByClassName('transaction-tile');
+
+            for (let tile of transactionTiles) {
+                const title = tile.getElementsByClassName('title')[0];
+
+                if (title.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tile.style.display = "";
+                    tile.classList.remove('invisible');
+                }
+                else {
+                    tile.style.display = "none";
+                    tile.classList.add('invisible');
+                }
+            }
+
+            const isMonthEmpty = Array.from(transactionTiles).every(tile => tile.style.display === "none");
+
+            if (isMonthEmpty) {
+                transaction.style.display = "none";
+                transaction.classList.add('invisible');
+            }
+            else {
+                transaction.style.display = "";
+                transaction.classList.remove('invisible');
+            }
+        }
+
+        filterByRadioBtn();
+    }
+
+    document.getElementById('all').addEventListener('change', () => {
+        filterByRadioBtn();
+    });
+
+    document.getElementById('expenses').addEventListener('change', () => {
+        filterByRadioBtn();
+    });
+
+    document.getElementById('revenues').addEventListener('change', () => {
+        filterByRadioBtn();
+    });
+
+    document.getElementById('search-bar').addEventListener('keyup', () => {
+        filterByTitle();
+    });
+
+    document.getElementById('search-bar-cross').addEventListener('click', () => {
+        const searchBar = document.getElementById('search-bar');
+        searchBar.value = '';
+
+        const keyupEvent = new KeyboardEvent('keyup', { key: 'Backspace' });
+        searchBar.dispatchEvent(keyupEvent);
+    });
+</script>
+
+<!-- Szablon 1
+
+<div class="month-transactions">
+    <div class="month">
+        Styczeń 2024
+    </div>
+    <div class="transaction-tile">
+        <div class="title-date-container">
+            <div class="title">
+                Tytuł
+            </div>
+            <div class="date">
+                01.01.2024
+            </div>
+        </div>
+        <div class="amount">
+            50
+        </div>
+        <div class="index">
+            0
+        </div>
+    </div>
+    <div class="transaction-tile">
+        <div class="title-date-container">
+            <div class="title">
+                Tytuł
+            </div>
+            <div class="date">
+                01.01.2024
+            </div>
+        </div>
+        <div class="amount">
+            50
+        </div>
+        <div class="index">
+            0
+        </div>
+    </div>
+    <div class="transaction-tile">
+        <div class="title-date-container">
+            <div class="title">
+                Tytuł
+            </div>
+            <div class="date">
+                01.01.2024
+            </div>
+        </div>
+        <div class="amount">
+            50
+        </div>
+        <div class="index">
+            0
+        </div>
+    </div>
+</div>
+
+ -->
+
+ <!-- Szablon 2
+ 
+ <div class="info-container">
+    <div class="info-type">
+        Numer konta
+    </div>
+    <div class="info-content">
+        12 2817 5019 2380 0000 0003 3456
+    </div>
+</div>
+
+  -->

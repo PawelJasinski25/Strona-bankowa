@@ -1,0 +1,18 @@
+<link href="css/bilety/bilety-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="outer-container">
+    <button id="bought-tickets-button" class="ticket-box">Kupione <br>bilety</button>
+    <button id="tickets-offer-button" class="ticket-box">Oferta <br>biletów</button>
+</div>
+
+<!-- JavaScript -->
+<script>
+    $('#bought-tickets-button').click(() => {
+        loadBoughtTicketsPage();
+    });
+
+    $('#tickets-offer-button').click(() => {
+        loadTicketsOfferPage();
+    });
+</script>

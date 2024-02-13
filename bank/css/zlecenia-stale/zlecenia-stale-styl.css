@@ -1,0 +1,39 @@
+#outer-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.ticket-box {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+    border: none;
+    margin: 30px;
+    width: 400px;
+    aspect-ratio: 1 / 1;
+    font-size: 3em;
+}
+
+.ticket-box:hover {
+    background-color: #447ac2;
+    color: white;
+    font-weight: bold;
+    transition: 0.75s ease;
+}
+
+@media screen and (max-width: 575px) {
+    .ticket-box {
+        margin: 15px 0;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .ticket-box {
+        width: 75%;
+        max-width: 250px;
+        font-size: 2em;
+    }
+}

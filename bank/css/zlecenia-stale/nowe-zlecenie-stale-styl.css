@@ -1,0 +1,273 @@
+main {
+    display: block;
+}
+
+#account-state, #form-container {
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+}
+
+#account-state {
+    width: 50%;
+}
+
+#account-state-header {
+    font-size: 1.75em;
+}
+
+#account-state-info {
+    background-color: white;
+    border: 2px solid #dddddd;
+    border-radius: 5px;
+    padding: 20px;
+    font-size: 1.33em;
+    margin-top: 20px
+}
+
+#account-name {
+    font-weight: bold;
+}
+
+#account-number {
+    font-size: smaller;
+}
+
+#available-funds {
+    text-align: right;
+}
+
+#form-container {
+    margin-top: 30px;
+}
+
+#form-header, #schedule-form-header {
+    font-size: 1.75em;
+}
+
+form {
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-column {
+    flex: 0.33;
+}
+
+.form-field-container {
+    margin: 25px 0;
+    font-size: 1.2em;
+    display: flex;
+    flex-direction: column;
+}
+
+input, select {
+    padding: 6px 12px;
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+}
+
+input:focus, select:focus {
+    outline: none;
+}
+
+input:focus {
+    border-color: #8b8b8b;
+    background-color: #ededed;
+}
+
+.wrong-input {
+    border-color: #ffa5a5;
+    background-color: #ffdede;
+}
+
+.wrong-input:focus {
+    border-color: #bf0000;
+    background-color: #ffcccc;
+}
+
+option {
+    color: black;
+    background-color: white;
+}
+
+#buttons-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#form-button {
+    margin-left: 10px;
+}
+
+.responsive-margin-bottom {
+    margin-bottom: 25px;
+}
+
+.error-box {
+    display: none;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: red;
+}
+
+input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+#amount-container {
+    position: relative;
+}
+
+#amount {
+    width: 100%;
+    padding-right: 35px;
+}
+
+#zl {
+    margin: 0;
+    position: absolute;
+    right: 12px;
+    top: 7px;
+}
+
+.bt-pop-up {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 110;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.bt-pop-up-content {
+    background-color: white;
+    width: 80%;
+    max-width: 700px;
+    height: 40%;
+    max-height: 350px;
+    min-height: 150px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.close-bt-pop-up {
+    color: #71a6db;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: -12px;
+    font-size: 3em;
+    font-weight: bold;
+    padding: 0 5px;
+    z-index: 5;
+}
+
+#bt-pop-up-text {
+    width: 90%;
+    font-size: 2.5em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#from {
+    background-color: #eff7ff;
+}
+
+#end-date:disabled {
+    background-color: #eff7ff;
+}
+
+#termless-container {
+    margin-top: 15px;
+}
+
+.min-252 {
+    min-width: 252px;
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+@media screen and (max-height: 450px) {
+    #bt-pop-up-text {
+        font-size: 1.75em;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    #account-state {
+        width: 100%;
+    }
+
+    form {
+        flex-direction: column;
+    }
+
+    .responsive-margin-bottom {
+        margin-bottom: 0;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    form {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .bt-pop-up {
+        font-size: 0.75em;
+    }
+
+    .close-bt-pop-up {
+        top: -8px;
+        right: 3px;
+    }
+
+    .min-252 {
+        min-width: unset;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    #account-state, #form-container {
+        padding: 15px;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    #buttons-container {
+        font-size: 0.8em;
+        padding: 0;
+    }
+
+    .blue-button {
+        padding: 7px 14px;
+    }
+}

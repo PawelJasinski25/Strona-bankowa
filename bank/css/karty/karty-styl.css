@@ -1,0 +1,329 @@
+#content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#section-name {
+    font-size: 1.75em;
+}
+
+.page-section {
+    background-color: white;
+    border-radius: 5px;
+    padding: 25px;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+}
+
+.left-column > img {
+    width: 250px;
+    height: auto;
+}
+
+#card-img {
+    width: 250px;
+    height: auto;
+}
+
+.width-300 {
+    width: 300px !important;
+    height: auto;
+}
+
+.left-column, .left-column-block-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.right-column {
+    padding-top: 15px;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-information-second-row, .block-card-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#card-a-1, #card-a-2, #card-a-3 {
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 0.95em;
+}
+
+.block-card {
+    text-align: center;
+}
+
+.left-column-block-card {
+    align-items: center;
+}
+
+.card-information-element {
+    background-color: #eff7ff;
+    border: 2px solid #dddddd;
+    border-radius: 5px;
+    font-size: 1.33em;
+    margin-bottom: 60px;
+    position: relative;
+}
+
+.card-information-element button {
+    font-size: 0.95em;
+    margin-left: 30px;
+}
+
+#card-information {
+    margin-bottom: 30px;
+}
+
+#blocked-card-confirmation {
+    height: 100%;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.border-danger {
+    border: red solid 2px;
+}
+
+#card-information p {
+    font-size: 1.2em;
+}
+
+.header-text {
+    font-size: 3em;
+}
+
+p.important {
+    margin-top: 3em;
+    font-size: 1.33em !important;
+    font-weight: bolder;
+}
+
+#button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#block-button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.btn[id="confirm-card-block-button"] {
+    padding: 10px 20px !important;
+    font-size: 1.5em !important;
+    vertical-align: revert !important;
+}
+
+button.btn-danger {
+    font-size: 1.2em !important;
+}
+
+.confirmation-element {
+    padding: 20px;
+    font-size: 1.33em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.confirmation-header {
+    font-size: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+
+.curtain, .curtain-text {
+    display: none;
+    min-width: 100%;
+    min-height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.curtain {
+    background-color: rgba(233, 233, 233, 37%);
+}
+
+.curtain-text {
+    color: #fc0303;
+    font-size: 3em;
+    z-index: 80;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px #cdcdcd;
+}
+
+.card-information-element div:has(> .curtain[style="display: flex;"]) {
+    filter: blur(6px);
+}
+
+@media (max-width: 1060px) {
+    #block-card-second-row {
+        flex-direction: column !important;
+        padding: 15px 0 15px 15px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 1040px) {
+    #block-card-information div, .block-card-text{
+        flex-direction: column !important;
+        margin-right: 0 !important;
+        align-items: center;
+    }
+}
+
+@media (max-width: 1004px) {
+    .card-information-element {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    .card-information-element, .left-column {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .card-information-second-row {
+        display: flex;
+        flex-direction: column !important;
+    }
+
+    .card-information-second-row > span {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 575px) {
+    .block-card-text, .right-column {
+        font-size: smaller !important;
+    }
+
+    #block-button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #strong-warning {
+        font-size: 2.33em;
+    }
+
+    #card-img {
+        max-width: 200px;
+        width: 100%;
+    }
+
+    .width-300 {
+        max-width: 300px !important;
+        width: 100% !important;
+    }
+
+    #button-container button {
+        font-size: 1.1em !important;
+    }
+
+    #return-button, #confirm-card-block-button {
+        padding: 7px 14px !important;
+    }
+
+    #blocked-card-confirmation {
+        justify-content: space-around;
+        padding: 15px;
+    }
+
+    #blocked-card-confirmation .confirmation-element {
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .homepage-section {
+        padding: 12.5px;
+        font-size: 1.0em;
+    }
+
+    .left-column, .right-column {
+        width: 100%;
+        display: block;
+        text-align: center;
+        justify-content: initial;
+        flex-direction: initial;
+    }
+
+    .first-row {
+        text-align: left;
+        display: block;
+        justify-content: initial;
+        margin-bottom: 30px;
+    }
+
+    .card-information-second-row {
+        justify-content: initial;
+    }
+
+    .second-row-element {
+        margin-left: initial;
+        margin-right: 30px;
+        display: block;
+    }
+}
+
+@media (max-width: 450px) {
+    .left-column > img {
+        max-width: 200px;
+        width: 100%;
+    }
+
+    .card-information-element {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .card-information-element button {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .card-btns-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #danger-section {
+        padding: 15px;
+    }
+    
+    .width-300 {
+        max-width: 250px !important;
+    }
+}
+
+@media (max-width: 350px) {
+    .page-section {
+        padding: 15px;
+    }
+
+    .custom-padding {
+        padding: 11px !important;
+    }
+
+    #confirm-card-block-button {
+        margin-left: 15px;
+    }
+}

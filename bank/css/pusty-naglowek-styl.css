@@ -1,0 +1,19 @@
+#page-header {
+    justify-content: center;
+}
+
+#page-header h1 {
+    display: none;
+}
+
+@media screen and (max-width: 850px) {
+    #page-header {
+        justify-content: space-between;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    #page-header img {
+        align-self: flex-end;
+    }
+}

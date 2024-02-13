@@ -1,0 +1,18 @@
+<link href="css/zlecenia-stale/zlecenia-stale-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="outer-container">
+    <button id="active-so-button" class="ticket-box">Aktywne <br>zlecenia <br>stałe</button>
+    <button id="new-so-button" class="ticket-box">Nowe <br>zlecenie <br>stałe</button>
+</div>
+
+<!-- JavaScript -->
+<script>
+    $('#active-so-button').click(() => {
+        loadActiveStandingOrdersPage();
+    });
+
+    $('#new-so-button').click(() => {
+        loadNewStandingOrderPage();
+    });
+</script>

@@ -1,0 +1,30 @@
+<link href="css/karty/karty-styl.css" type="text/css" rel="stylesheet">
+<link href="css/pusty-naglowek-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="content">
+    <div id="blocked-card-confirmation" class="page-section">
+        <div class="confirmation-header mb-3" >Karta została zastrzeżona</div>
+        <div class="confirmation-element">
+            <div class="left-column text-center d-block">
+                <img id="card-img" class="width-300" src="" alt="karta">
+            </div>
+            <div class="right-column px-0 pb-1">
+                <div id="card-number"></div>
+                <div id="card-valid-to"></div>
+            </div>
+        </div>
+        <div id="block-button-container" class="text-center">
+            <button id="return-to-cards-button" class="blue-button" type="button">
+                Powrót do kart
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    $('#return-to-cards-button').click(() => {
+        loadCardsPage();
+    });
+</script>

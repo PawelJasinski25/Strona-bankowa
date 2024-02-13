@@ -1,0 +1,99 @@
+main {
+    justify-content: center;
+}
+
+#main-tile {
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 675px;
+    overflow-x: auto;
+}
+
+#main-tile-header {
+    font-size: 2em;
+    padding: 15px;
+}
+
+#buttons-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 15px 7px 15px;
+    font-size: 1.1em;
+}
+
+#all-transfer-data {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 15px;
+}
+
+.data-container {
+    margin: 20px 0;
+}
+
+.data-label {
+    font-size: 1.05em;
+}
+
+.data {
+    font-size: 1.5em;
+}
+
+#from-number {
+    margin-top: 5px;
+}
+
+#go-back-button {
+    margin-right: 10px;
+}
+
+.acc-num-font-size {
+    font-size: 1.4em !important;
+}
+
+@media screen and (max-width: 575px) {
+    #main-tile {
+        flex: 1;
+    }
+    
+    #all-transfer-data {
+        text-wrap: wrap;
+    }
+}
+
+@media screen and (max-width: 510px) {   
+    #main-tile {
+        padding: 10px;
+        font-size: smaller;
+    }
+
+    #buttons-container {
+        font-size: 1em;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    #main-tile {
+        font-size: 0.93em;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    #main-tile-header, #all-transfer-data {
+        padding: 10px;
+    }
+
+    #buttons-container {
+        font-size: 0.85em;
+        padding: 5px;
+    }
+
+    .blue-button {
+        padding: 8px 16px;
+    }
+}

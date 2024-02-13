@@ -1,0 +1,75 @@
+<link href="css/przelewy/zatwierdzenie-przelewu-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="main-tile">
+    <div id="main-tile-header">Dane przelewu</div>
+    <div id="all-transfer-data">
+        <div class="data-container">
+            <div class="data-label">Przelew z</div>
+            <div id="from-account" class="data"></div>
+            <div id="from-number" class="data acc-num-font-size"></div>
+        </div>
+        <div class="data-container">
+            <div class="data-label">Przelew do (imię i nazwisko lub nazwa)</div>
+            <div id="beneficiary" class="data"></div>
+        </div>
+        <div class="data-container">
+            <div class="data-label">Numer konta lub telefonu</div>
+            <div id="to-number" class="data"></div>
+        </div>
+        <div class="data-container">
+            <div class="data-label">Tytuł przelewu</div>
+            <div id="title" class="data"></div>
+        </div>
+        <div class="data-container">
+            <div class="data-label">Data wykonania przelewu</div>
+            <div id="date" class="data"></div>
+        </div>
+        <div class="data-container">
+            <div class="data-label">Kwota</div>
+            <div id="amount" class="data"></div>
+        </div>
+    </div>
+    <div id="buttons-container">
+        <a id="go-back-button" class="blue-button">Wróć</a>
+        <a id="confirm-button" class="blue-button">Zatwierdź</a>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function initializeConfirmationTile() {
+        const fromAccountDiv = document.getElementById('from-account');
+        const fromNumberDiv = document.getElementById('from-number');
+        const beneficiaryDiv = document.getElementById('beneficiary');
+        const toNumberDiv = document.getElementById('to-number');
+        const titleDiv = document.getElementById('title');
+        const dateDiv = document.getElementById('date');
+        const amountDiv = document.getElementById('amount');
+
+        const pendingBankTransfer = BankStorage.getPendingBankTransfer();
+
+        if (removeWhiteSpaces(pendingBankTransfer.toNumber).length === 26) {
+            toNumberDiv.classList.add('acc-num-font-size');
+        }
+
+        fromAccountDiv.innerHTML = pendingBankTransfer.fromAccount;
+        fromNumberDiv.innerHTML = pendingBankTransfer.fromNumber;
+        beneficiaryDiv.innerHTML = pendingBankTransfer.beneficiary;
+        toNumberDiv.innerHTML = pendingBankTransfer.toNumber;
+        titleDiv.innerHTML = pendingBankTransfer.title;
+        dateDiv.innerHTML = pendingBankTransfer.date;
+        amountDiv.innerHTML = formatMoney(pendingBankTransfer.amount);
+    }
+
+    $('#go-back-button').click(() => {
+        loadBankTransfersPage();
+    });
+
+    document.getElementById('confirm-button').addEventListener('click', () => {
+        BankStorage.makeATransaction(BankStorage.getPendingBankTransfer());
+        BankStorage.removePendingBankTransfer();
+        loadBankTransferDonePage();
+    });
+</script>

@@ -1,0 +1,239 @@
+<link href="css/zlecenia-stale/nowe-zlecenie-stale-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="account-state">
+    <div id="account-state-header">Stan konta</div>
+    <div id="account-state-info">
+        <div id="account-name"></div>
+        <div id="account-number"></div>
+        <div id="available-funds"></div>
+    </div>
+</div>
+<div id="form-container">
+    <div id="form-header">Dane zlecenia</div>
+    <form>
+        <div class="form-column">
+            <div class="form-field-container">
+                <label for="from">Zlecenie od</label>
+                <input type="text" id="from" name="from" disabled>
+            </div>
+            <div class="form-field-container">
+                <label for="beneficiary">Zlecenie do (imię i nazwisko lub nazwa)</label>
+                <input type="text" id="beneficiary" name="beneficiary">
+                <div id="beneficiary-error-box" class="error-box"></div>
+            </div>
+            <div class="form-field-container responsive-margin-bottom">
+                <label for="to-number">Numer konta lub telefonu</label>
+                <input type="text" id="to-number" name="to-number">
+                <div id="to-number-error-box" class="error-box"></div>
+            </div>
+        </div>
+        <div class="form-column">
+            <div class="form-field-container">
+                <label for="title">Tytuł zlecenia</label>
+                <input type="text" id="title" name="title">
+                <div id="title-error-box" class="error-box"></div>
+            </div>
+            <div class="form-field-container">
+                <label for="amount">Kwota</label>
+                <div id="amount-container">
+                    <input type="text" id="amount" name="amount">
+                    <p id="zl">zł</p>
+                </div>
+                <div id="amount-error-box" class="error-box"></div>
+            </div>
+        </div>
+    </form>
+    <div id="schedule-form-header">Harmonogram</div>
+    <form>
+        <div class="form-column min-252">
+            <div class="form-field-container">
+                <label for="date">Data rozpoczęcia</label>
+                <input type="date" id="date" name="date">
+                <div id="date-error-box" class="error-box"></div>
+            </div>
+            <div class="form-field-container">
+                <label for="frequency">Częstotliwość</label>
+                <select id="frequency">
+                    <option id="every-week" value="every-week">Co tydzień</option>
+                    <option id="every-month" value="every-month">Co miesiąc</option>
+                    <option id="every-quarter" value="every-quarter">Co 3 miesiące</option>
+                </select>
+            </div>
+            <div class="form-field-container responsive-margin-bottom">
+                <label for="end-date">Data zakończenia</label>
+                <input type="date" id="end-date" name="end-date">
+                <div id="end-date-error-box" class="error-box"></div>
+                <div id="termless-container">
+                    <label for="termless">Bezterminowo</label>
+                    <input type="checkbox" id="termless" name="termless" value="termless">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div id="buttons-container">
+        <a id="return-button" class="blue-button">Powrót</a>
+        <a id="form-button" class="blue-button">Potwierdź</a>
+    </div>
+</div>
+
+<div id="bt-pop-up-window" class="bt-pop-up">
+    <div id="bt-pop-up-content-window" class="bt-pop-up-content">
+        <span id="close-bt-pop-up-button" class="close-bt-pop-up">&times;</span>
+        <span id="bt-pop-up-text">Błędnie wprowadzone dane</span>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function initializeForm() {
+        firstTime = true;
+
+        const accountNameDiv = document.getElementById('account-name');
+        const accountNumberDiv = document.getElementById('account-number');
+        const availableFundsDiv = document.getElementById('available-funds');
+
+        accountNameDiv.innerHTML = BankStorage.getAccountName();
+        accountNumberDiv.innerHTML = longFormatAccNum(BankStorage.getAccountNumber());
+        availableFundsDiv.innerHTML = formatMoney(BankStorage.getAvailableFunds());
+
+        document.getElementById('from').value = BankStorage.getUsername();
+
+        const currentDateStr = getCurrentDate();
+        const tomorrow = new Date(currentDateStr);
+
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        document.getElementById('date').setAttribute('min', tomorrowStr);
+        document.getElementById('date').value = tomorrowStr;
+
+        document.getElementById('end-date').setAttribute('min', tomorrowStr);
+        document.getElementById('end-date').value = tomorrowStr;
+    }
+
+    document.getElementById('beneficiary').addEventListener('input', () => {
+        validateBeneficiary();
+    });
+
+    document.getElementById('to-number').addEventListener('blur', () => {
+        firstTime = false;
+    });
+    document.getElementById('to-number').addEventListener('change', (event) => {
+        validateToNumber(event);
+    });
+    document.getElementById('to-number').addEventListener('input', (event) => {
+        if (!firstTime) {
+            validateToNumber(event);
+        }
+    });
+
+    document.getElementById('title').addEventListener('input', () => {
+        validateTitle();
+    });
+
+    document.getElementById('amount').addEventListener('change', (event) => {
+        validateSOAmount(event);
+    });
+    document.getElementById('amount').addEventListener('input', (event) => {
+        validateSOAmount(event);
+    });
+
+    document.getElementById('date').addEventListener('input', () => {
+        validateDate();
+        validateEndDate();
+    });
+
+    document.getElementById('frequency').addEventListener('change', () => {
+        validateEndDate();
+    })
+
+    document.getElementById('end-date').addEventListener('input', () => {
+        validateEndDate();
+    });
+
+    document.getElementById('termless').addEventListener('change', () => {
+        validateEndDate();
+    });
+
+    document.getElementById('form-button').addEventListener('click', (event) => {
+        if (firstTime) {
+            firstTime = false;
+        }
+
+        const activeElement = document.activeElement;
+
+        if (activeElement) {
+            activeElement.blur();
+        }
+
+        validateBeneficiary();
+        validateToNumber(event);
+        validateTitle();
+        validateSOAmount(event);
+        validateDate();
+        validateEndDate();
+
+        const errorBoxes = [
+            document.getElementById('beneficiary-error-box'),
+            document.getElementById('to-number-error-box'),
+            document.getElementById('title-error-box'),
+            document.getElementById('amount-error-box'),
+            document.getElementById('date-error-box'),
+            document.getElementById('end-date-error-box'),
+        ];
+
+        // sprawdzamy czy przynajmniej jeden error box jest widoczny
+        const isWrongInput = errorBoxes.some(errorBox => window.getComputedStyle(errorBox).display === 'block');
+
+        if (!isWrongInput) {
+            const from = BankStorage.getUsername();
+            const beneficiary = document.getElementById('beneficiary').value;
+            const toNumber = document.getElementById('to-number').value;
+            const title = document.getElementById('title').value;
+
+            let amount = document.getElementById('amount').value;
+            let finalAmount = Transaction.handleTransactionAmount(amount, BankStorage.getAvailableFunds()).finalBankStorageValue;
+
+            const date = document.getElementById('date').value.split('-').reverse().join('.');
+            const frequency = document.getElementById('frequency').value;
+
+            let endDate;
+
+            if (document.getElementById('termless').checked) {
+                endDate = 'termless';
+            }
+            else {
+                endDate = document.getElementById('end-date').value.split('-').reverse().join('.');
+            }
+
+            const standingOrder = new StandingOrder(from, beneficiary, toNumber, title, String(finalAmount), date, frequency, endDate);
+
+            BankStorage.addStandingOrder(standingOrder);
+
+            loadStandingOrderAddedPage();
+        }
+        else {
+            document.getElementById('bt-pop-up-window').style.display = 'block';
+
+            // blokujemy przejście do kolejnego okna
+            event.preventDefault();
+        }
+    });
+
+    document.getElementById('return-button').addEventListener('click', () => {
+        loadStandingOrdersPage();
+    })
+
+    document.getElementById('close-bt-pop-up-button').addEventListener('click', () => {
+        document.getElementById('bt-pop-up-window').style.display = 'none';
+    });
+
+    document.getElementById('bt-pop-up-window').addEventListener('click', (e) => {
+        if(!e.target.matches('#bt-pop-up-content-window') && !e.target.matches('#bt-pop-up-text')) {
+            document.getElementById('bt-pop-up-window').style.display = 'none';
+        }
+    });
+</script>

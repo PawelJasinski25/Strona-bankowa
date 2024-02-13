@@ -1,0 +1,140 @@
+<link href="css/bilety/bilet-wspolne-styl.css" type="text/css" rel="stylesheet">
+<link href="css/bilety/zakupione-bilety-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="content">
+    <div id="pop-up-window" class="pop-up">
+        <div id="pop-up-content-window" class="pop-up-content">
+            <span id="close-pop-up-button" class="close-pop-up">&times;</span>
+            <div class="pop-up-header">Szczegóły</div>
+            <hr>
+            <div id="pop-up-text" class="container pop-up-text">
+                <div class="info-container">
+                    <div class="info-type">Rodzaj biletu:</div>
+                    <div id="ticket-type-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Posiadacz:</div>
+                    <div id="owner-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Cena zakupu:</div>
+                    <div id="ticket-amount-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Data zakupu:</div>
+                    <div id="purchase-date-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Bilet ważny od:</div>
+                    <div id="valid-from-info" class="info-content"></div>
+                </div>
+                <div class="info-container">
+                    <div class="info-type">Bilet ważny do:</div>
+                    <div id="valid-to-info" class="info-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ticket-information" class="homepage-section">
+        <div id="button-container">
+            <button id="return-button" class="blue-button" type="button">Powrót</button>
+            <button id="buy-button" class="blue-button" type="button">Kup bilet</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // onload
+    function boughtTicketsInit() {
+        const ticketInformation = document.getElementById('ticket-information');
+        const buttonContainer = document.getElementById('button-container');
+
+        let ticketsList = BankStorage.getTickets();
+
+        ticketsList.forEach(ticket => {
+            const ticketElement = document.createElement('div');
+            ticketElement.classList.add('ticket-information-element');
+
+            const leftColumn = document.createElement('div');
+            leftColumn.classList.add('left-column');
+
+            const ticketLeftColumnElement = document.createElement('div');
+            ticketLeftColumnElement.classList.add('ticket-left-column-element');
+            ticketLeftColumnElement.textContent = ticket.title;
+
+            leftColumn.appendChild(ticketLeftColumnElement);
+
+            const rightColumn = document.createElement('div');
+            rightColumn.classList.add('right-column');
+
+            const firstRow = document.createElement('div');
+            firstRow.classList.add('first-row');
+            firstRow.textContent = `Ważny do: ${ticket.validTo}`;
+
+            const secondRow = document.createElement('div');
+            secondRow.classList.add('second-row');
+
+            const detailsElement = document.createElement('div');
+            detailsElement.classList.add('second-row-element', 'details');
+            detailsElement.textContent = 'Szczegóły';
+
+            const printElement = document.createElement('div');
+            printElement.classList.add('second-row-element');
+            printElement.textContent = 'Drukuj';
+            printElement.addEventListener("click", () => {
+                alert("Symulacja: teraz następuje przeniesienie do panelu drukowania i drukowanie biletu");
+            });
+
+            secondRow.appendChild(detailsElement);
+            secondRow.appendChild(printElement);
+
+            rightColumn.appendChild(firstRow);
+            rightColumn.appendChild(secondRow);
+
+            ticketElement.appendChild(leftColumn);
+            ticketElement.appendChild(rightColumn);
+
+            ticketInformation.insertBefore(ticketElement, buttonContainer);
+        });
+
+        $('#return-button').click(() => {
+            loadTicketsPage();
+        });
+
+        $('#buy-button').click(() => {
+            loadTicketsOfferPage();
+        });
+    }
+
+    function updateTicketDetails(selectedTicket) {
+        document.getElementById('pop-up-text').scrollTo(0,0);
+        document.getElementById('ticket-type-info').textContent = selectedTicket.title;
+        document.getElementById('owner-info').textContent = selectedTicket.owner;
+        document.getElementById('ticket-amount-info').textContent = formatMoney(selectedTicket.amount);
+        document.getElementById('purchase-date-info').textContent = selectedTicket.date;
+        document.getElementById('valid-from-info').textContent = selectedTicket.validFrom;
+        document.getElementById('valid-to-info').textContent = selectedTicket.validTo;
+    }
+
+    // onload
+    function ticketsInformations() {
+        let modal = document.getElementById("pop-up-window");
+        let close = document.getElementById("close-pop-up-button");
+        let buttons = document.getElementsByClassName("details");
+
+        let ticketsList = BankStorage.getTickets();
+
+        for (let i = 0; i < buttons.length; i++) {
+            setupPopup(modal, buttons[i], close);
+            
+            let selectedTicket = ticketsList[i];
+
+            $(buttons[i]).click(function() {
+                updateTicketDetails(selectedTicket);
+            });
+        }
+    }
+</script>

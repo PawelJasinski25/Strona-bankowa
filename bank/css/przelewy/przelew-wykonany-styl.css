@@ -1,0 +1,40 @@
+main {
+    flex: unset !important;
+    justify-content: center;
+}
+
+#main-container {
+    flex: 0.75;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#main-container > div {
+    margin: 15px 0;
+}
+
+#main-container-header {
+    font-size: 2.5em;
+    text-align: center;
+}
+
+#green-tick {
+    color: green;
+    font-size: 10em;
+}
+
+@media screen and (max-width: 575px) {
+    #main-container {
+        flex: 1;
+    }
+}
+
+@media screen and (max-width: 300px) {
+    #main-container {
+        font-size: 0.9em;
+    }    
+}

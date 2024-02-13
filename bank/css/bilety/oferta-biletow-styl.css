@@ -1,0 +1,141 @@
+#main-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px;
+}
+
+#category-title {
+    font-size: 1.75em;
+    margin-bottom: 20px;
+}
+
+#category-row {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.category-button {
+    background-color: #0061a1;
+    color: white;
+    font-size: 1.1em;
+    border-radius: 5px;
+    border: none;
+    margin: 0 9px;
+    padding: 8px 16px;
+}
+
+.category-button:hover {
+    background-color: #0087eb;
+    transition: 0.5s ease;
+}
+
+#main-section hr {
+    margin: 20px 0;
+}
+
+.choice {
+    display: none;
+    flex: 1;
+}
+
+.active-choice {
+    display: block;
+}
+
+.ticket-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 50px;
+}
+
+.ticket-wrapper {
+    background: none;
+    border: none;
+    width: calc((100% - 30px) / 3);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticket-wrapper:hover {
+    transform: scale(1.1);
+    transition: 0.5s ease;
+}
+
+.ticket {
+    display: flex;
+    box-shadow: #B8B8B9 0 0 5px 0, #cccccc 0 4px 20px 0;
+    border-radius: 5px;
+    width: 75%;
+    margin: 15px auto;
+}
+
+.ticket img {
+    width: 100%;
+}
+
+.category-text {
+    font-size: 120%;
+    margin-bottom: 8px;
+}
+
+@media screen and (max-width: 1080px) {
+    .ticket-wrapper {
+        width: calc((100% - 30px) / 2);
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .ticket-wrapper {
+        width: calc((100% - 30px) / 3);
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .ticket-wrapper {
+        width: calc((100% - 30px) / 2);
+    }
+}
+
+@media screen and (max-width: 575px) {
+    #main-section {
+        padding: 15px;
+    }
+    
+    .category-button {
+        font-size: 1em;
+        margin: 0 5px;
+    }
+}
+
+@media screen and (max-width: 466px) {
+    .ticket-wrapper {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+
+    #category-row {
+        flex-direction: column;
+    }
+
+    .category-button {
+        align-self: center;
+        margin: 8px 0;
+    }
+
+    #button-container {
+        text-align: center;
+    }
+}

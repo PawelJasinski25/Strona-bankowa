@@ -1,0 +1,18 @@
+<link href="css/zlecenia-stale/zlecenie-stale-dodane-styl.css" type="text/css" rel="stylesheet">
+<link href="css/pusty-naglowek-styl.css" type="text/css" rel="stylesheet">
+
+<!-- Główna zawartość strony -->
+<div id="main-container">
+    <div id="main-container-header">Pomyślnie dodano zlecenie stałe</div>
+    <div id="green-tick">&#10004;</div>
+    <div id="go-active-sos-button-container">
+        <a id="go-active-sos-button" class="blue-button">Zobacz aktywne zlecenia</a>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    $('#go-active-sos-button').click(() => {
+        loadActiveStandingOrdersPage();
+    });
+</script>
